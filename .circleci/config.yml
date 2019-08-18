@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: namachan10777/misc3d:latest
+
+    steps:
+      - checkout
+
+      - run:
+          name: build namecard-box
+          command: make -C namecard-box
+      - store_artifacts:
+          path: ./namecard-box/namecard-box.stl
+          destination: namecard-box.stl
