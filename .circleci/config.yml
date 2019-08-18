@@ -12,7 +12,7 @@ jobs:
           command: git submodule update --init --recursive
       - run:
           name: build namecard-box
-          command: make -C namecard-box
+          command: eval $(opam env) && make -C namecard-box
       - store_artifacts:
           path: ./namecard-box/namecard-box.stl
           destination: namecard-box.stl
