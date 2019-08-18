@@ -8,6 +8,9 @@ jobs:
       - checkout
 
       - run:
+          name: init submodules
+          command: git submodule update --init --recursive
+      - run:
           name: build namecard-box
           command: make -C namecard-box
       - store_artifacts:
