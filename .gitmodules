@@ -1,0 +1,3 @@
+[submodule "scad_ml"]
+	path = scad_ml
+	url = https://github.com/namachan10777/scad-ml
