@@ -2,37 +2,57 @@ module M = Scad_ml.Model
 
 open Scad_ml.Util
 
-let top_w = 40.0
-let bottom_w = 80.0
-let h = 50.0
 let eps = 3.0
-let d_front = 140.0
-let d_back = 80.0
-let x_diff = 80.0
-let groove_size = (20.0, 10.0)
-let wire_hall_d = 50.0
-let wire_hall_h = 30.0
-let wire_hall_y = 60.
 
-let model =
-    let top_line = M.cube (top_w, eps, eps) in
-    let bottom_line = M.cube (bottom_w, eps, eps) in
+type wire_hall_confg_t = {
+    d: float;
+    h: float;
+    y: float;
+}
+
+type depth_config_t = {
+    front: float;
+    back: float;
+}
+
+type groove_config_t = {
+    w: float;
+    h: float;
+}
+
+type config_t = {
+    top: float;
+    bottom: float;
+    height: float;
+    depth: depth_config_t;
+    x_diff: float;
+    groove: groove_config_t;
+    wire_hall: wire_hall_confg_t;
+}
+
+(*
+ *  0.001とか足したりしてるのは全てプレビューでの見やすさのためです。
+ *)
+
+let model cfg =
+    let top_line = M.cube (cfg.top, eps, eps) in
+    let bottom_line = M.cube (cfg.bottom, eps, eps) in
     let wall = M.hull [
-        top_line |>> ((bottom_w -. top_w) /. 2., 0., h -. eps +. snd groove_size);
+        top_line |>> ((cfg.bottom -. cfg.top) /. 2., 0., cfg.height -. eps +. cfg.groove.h);
         bottom_line;
     ] in
     let groove_sec =
-        M.cube (fst groove_size, 0.002 +. eps, 0.001 +. snd groove_size) |>> (0., -0.001, 0.0)
-        |>> ((bottom_w -. fst groove_size) /. 2., 0., h) in
+        M.cube (cfg.groove.w, 0.002 +. eps, 0.001 +. cfg.groove.h) |>> (0., -0.001, 0.0)
+        |>> ((cfg.bottom -. cfg.groove.w) /. 2., 0., cfg.height) in
     let trace sec = M.union [
         M.hull [
-            sec; sec |>> (x_diff, d_front -. eps, 0.0);
+            sec; sec |>> (cfg.x_diff, cfg.depth.front -. eps, 0.0);
         ];
         M.hull [
-            sec |>> (x_diff, d_front -. eps, 0.0);
-            sec |>> (x_diff, d_front +. d_back -. eps, 0.0);
+            sec |>> (cfg.x_diff, cfg.depth.front -. eps, 0.0);
+            sec |>> (cfg.x_diff, cfg.depth.front +. cfg.depth.back -. eps, 0.0);
         ];
     ] in
-    let wire_hall_w = bottom_w +. x_diff in
-    let wire_hall = M.cube (2.0 +. wire_hall_w, wire_hall_d, wire_hall_h) |>> (-1., wire_hall_y, 0.) in
+    let wire_hall_w = cfg.bottom +. cfg.x_diff in
+    let wire_hall = M.cube (2.0 +. wire_hall_w, cfg.wire_hall.d, cfg.wire_hall.h +. 0.001) |>> (-1., cfg.wire_hall.y, -0.001) in
     M.difference (trace wall) [trace groove_sec; wire_hall]
