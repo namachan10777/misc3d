@@ -1,0 +1,4 @@
+(executable
+ (public_name geta_DKS_4K65DG3)
+ (name main)
+ (libraries geta_DKS_4K65DG3))

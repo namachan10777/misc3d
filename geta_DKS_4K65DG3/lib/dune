@@ -1,0 +1,3 @@
+(library
+ (name geta_DKS_4K65DG3)
+ (libraries scad_ml))
