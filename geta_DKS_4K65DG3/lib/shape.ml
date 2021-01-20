@@ -34,7 +34,7 @@ type config_t = {
  *  0.001とか足したりしてるのは全てプレビューでの見やすさのためです。
  *)
 
-let model cfg =
+let model_left cfg =
     let top_line = M.cube (cfg.top, eps, eps) in
     let bottom_line = M.cube (cfg.bottom, eps, eps) in
     let wall = M.hull [
@@ -56,3 +56,6 @@ let model cfg =
     let wire_hall_w = cfg.bottom +. cfg.x_diff in
     let wire_hall = M.cube (2.0 +. wire_hall_w, cfg.wire_hall.d, cfg.wire_hall.h +. 0.001) |>> (-1., cfg.wire_hall.y, -0.001) in
     M.difference (trace wall) [trace groove_sec; wire_hall]
+
+let model_right cfg =
+    model_left cfg |> M.mirror (1, 0, 0)

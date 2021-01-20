@@ -1,5 +1,5 @@
 BIN := _build/default/bin/main.exe
-SCAD := geta.scad
+SCAD := geta-r.scad geta-l.scad
 STL := $(patsubst %.scad,%.stl,$(SCAD))
 
 SOURCES := \
